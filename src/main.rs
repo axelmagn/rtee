@@ -2,10 +2,10 @@ extern crate rustc_serialize;
 extern crate docopt;
 
 use docopt::Docopt;
+use std::fmt::Display;
+use std::fs::{OpenOptions, File};
 use std::io::prelude::*;
 use std::io;
-use std::fs::{OpenOptions, File};
-use std::fmt::Display;
 
 
 
@@ -59,9 +59,10 @@ fn main() {
     };
 
     // Open files for writing
-    let mut files: Vec<File> = args.arg_file.iter()
+    let mut files: Vec<io::BufWriter<File>> = args.arg_file.iter()
                                      .map(|p| open_opts.open(p))
                                      .filter_map(handle_errors)
+                                     .map(|f| io::BufWriter::new(f))
                                      .collect();
 
     // open stderr and stdout for writing
@@ -78,7 +79,7 @@ fn main() {
             // write to each file
             // fail loudly for now
             files.iter_mut()
-                .map(|f: &mut File| f.write(&[b]))
+                .map(|f: &mut io::BufWriter<File>| f.write(&[b]))
                 .filter_map(handle_errors)
                 .last();
             b
