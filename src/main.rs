@@ -43,8 +43,6 @@ fn main() {
                             // -> Result<Args, Error>
                              .unwrap_or_else(|e| e.exit());
                             // -> Args
-                            
-
 
     // set up open opts
     let append = args.flag_append;
@@ -59,7 +57,8 @@ fn main() {
     };
 
     // Open files for writing
-    let mut files: Vec<io::BufWriter<File>> = args.arg_file.iter()
+    type FileHandle = io::BufWriter<File>;
+    let mut files: Vec<FileHandle> = args.arg_file.iter()
                                      .map(|p| open_opts.open(p))
                                      .filter_map(handle_errors)
                                      .map(|f| io::BufWriter::new(f))
@@ -79,7 +78,7 @@ fn main() {
             // write to each file
             // fail loudly for now
             files.iter_mut()
-                .map(|f: &mut io::BufWriter<File>| f.write(&[b]))
+                .map(|f: &mut FileHandle| f.write(&[b]))
                 .filter_map(handle_errors)
                 .last();
             b

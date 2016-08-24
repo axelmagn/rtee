@@ -1,6 +1,6 @@
 [package]
 name = "rtee"
-version = "1.1.1"
+version = "1.1.2"
 authors = ["Axel Magnuson <axelmagn@gmail.com>"]
 
 [dependencies]
